@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>桜蜜国 - Sakuramicu</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP&display=swap" rel="stylesheet">
+  <div class="account-menu">
+  <img src="default-avatar.png" alt="Avatar" id="user-avatar" />
+<div class="dropdown hidden" id="account-dropdown">
+    <form id="login-form">
+      <input type="email" placeholder="Email" id="email" required />
+      <input type="password" placeholder="Пароль" id="password" required />
+      <button type="submit">Войти</button>
+    </form>
+    <button onclick="logout()">Выйти</button>
+  </div>
+</div>
+
   <style>
   <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
