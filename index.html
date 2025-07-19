@@ -1,138 +1,180 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Главная страница</title>
+  <title>Sakuramicu</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyC3NHMsA8hWcqSLrwFjctnLbxTcd-qFJpc",
-      authDomain: "sakuramicu-c781e.firebaseapp.com",
-      projectId: "sakuramicu-c781e",
-      storageBucket: "sakuramicu-c781e.appspot.com",
-      messagingSenderId: "1009061010630",
-      appId: "1:1009061010630:web:ea6521a024bb118f968bc7"
-    };
-    firebase.initializeApp(firebaseConfig);
-  </script>
   <style>
     body {
       margin: 0;
-      font-family: "Segoe UI", sans-serif;
-      background: #f4f4f4;
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
     }
-
     header {
-      background: #fff;
-      padding: 15px 30px;
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       align-items: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 10px 20px;
+      background: #ffffff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .logo {
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .account-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: url('https://cdn-icons-png.flaticon.com/512/149/149071.png') center/cover no-repeat;
+      cursor: pointer;
       position: relative;
     }
-
-    .account-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-
-    .account-icon:hover {
-      transform: scale(1.05);
-    }
-
-    .account-menu {
+    .dropdown {
       position: absolute;
-      top: 70px;
-      right: 30px;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      top: 45px;
+      right: 0;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      padding: 10px;
       display: none;
-      flex-direction: column;
-      overflow: hidden;
-      animation: fadeIn 0.2s ease;
+      z-index: 999;
     }
-
-    .account-menu button {
-      background: none;
+    .dropdown button {
+      background: #dc3545;
+      color: white;
       border: none;
-      padding: 15px 20px;
+      padding: 8px 12px;
       cursor: pointer;
-      text-align: left;
-      width: 100%;
-      font-size: 14px;
-      transition: background 0.2s;
+      border-radius: 4px;
     }
-
-    .account-menu button:hover {
-      background: #f0f0f0;
+    #main, #auth {
+      display: none;
+      padding: 20px;
     }
-
-    @keyframes fadeIn {
-      from {opacity: 0; transform: translateY(-10px);}
-      to {opacity: 1; transform: translateY(0);}
+    #auth input {
+      display: block;
+      margin: 10px 0;
+      padding: 8px;
+      width: 200px;
     }
-
-    main {
-      padding: 40px;
-      text-align: center;
+    #auth button {
+      padding: 8px 12px;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Аккаунт" class="account-icon" id="account-icon">
-    <div class="account-menu" id="account-menu">
-      <button id="logout-btn">Выйти</button>
+<header>
+  <div class="logo">Sakuramicu</div>
+  <div id="account-container" style="position: relative;">
+    <div class="account-icon" id="accountIcon"></div>
+    <div class="dropdown" id="accountDropdown">
+      <button id="logoutBtn">Выйти</button>
     </div>
-  </header>
+  </div>
+</header>
 
-  <main>
-    <h1>Добро пожаловать!</h1>
-    <p>Вы вошли в систему.</p>
-  </main>
+<div id="main">
+  <h2>Добро пожаловать!</h2>
+  <p>Это главная страница сайта.</p>
+</div>
 
-  <script>
-    const accountIcon = document.getElementById('account-icon');
-    const accountMenu = document.getElementById('account-menu');
-    const logoutBtn = document.getElementById('logout-btn');
+<div id="auth">
+  <h2>Вход или регистрация</h2>
+  <input type="email" id="email" placeholder="Email">
+  <input type="password" id="password" placeholder="Пароль">
+  <button onclick="signUp()">Зарегистрироваться</button>
+  <button onclick="signIn()">Войти</button>
+  <button onclick="signInWithGoogle()">Войти через Google</button>
+</div>
 
-    // Переключение видимости меню аккаунта
-    accountIcon.addEventListener('click', () => {
-      accountMenu.style.display = (accountMenu.style.display === 'flex') ? 'none' : 'flex';
-    });
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    // Выход из аккаунта
-    logoutBtn.addEventListener('click', () => {
-      firebase.auth().signOut().then(() => {
-        location.reload();
-      }).catch((error) => {
-        alert('Ошибка выхода: ' + error.message);
-      });
-    });
+  const firebaseConfig = {
+    apiKey: "AIzaSyC3NHMsA8hWcqSLrwFjctnLbxTcd-qFJpc",
+    authDomain: "sakuramicu-c781e.firebaseapp.com",
+    projectId: "sakuramicu-c781e",
+    storageBucket: "sakuramicu-c781e.appspot.com",
+    messagingSenderId: "1009061010630",
+    appId: "1:1009061010630:web:ea6521a024bb118f968bc7",
+    measurementId: "G-FJ9G8Q6WRB"
+  };
 
-    // Автоматическое скрытие меню при клике вне его
-    document.addEventListener('click', function (e) {
-      if (!accountMenu.contains(e.target) && !accountIcon.contains(e.target)) {
-        accountMenu.style.display = 'none';
-      }
-    });
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
 
-    // Проверка авторизации
-    firebase.auth().onAuthStateChanged((user) => {
-      if (!user) {
-        window.location.href = "login.html"; // или ваш путь к странице авторизации
-      }
-    });
-  </script>
+  const main = document.getElementById('main');
+  const authBlock = document.getElementById('auth');
+  const accountIcon = document.getElementById('accountIcon');
+  const dropdown = document.getElementById('accountDropdown');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  // Показ интерфейса
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      main.style.display = 'block';
+      authBlock.style.display = 'none';
+    } else {
+      main.style.display = 'none';
+      authBlock.style.display = 'block';
+    }
+  });
+
+  // Регистрация
+  window.signUp = async () => {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      alert("Ошибка регистрации: " + error.message);
+    }
+  };
+
+  // Вход
+  window.signIn = async () => {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      alert("Ошибка входа: " + error.message);
+    }
+  };
+
+  // Вход через Google
+  window.signInWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      alert("Ошибка входа через Google: " + error.message);
+    }
+  };
+
+  // Выход
+  logoutBtn.onclick = async () => {
+    await signOut(auth);
+    dropdown.style.display = "none";
+  };
+
+  // Показывать/скрывать меню аккаунта
+  accountIcon.onclick = () => {
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+  };
+
+  // Скрытие меню при клике вне блока
+  document.addEventListener("click", function(event) {
+    if (!accountIcon.contains(event.target) && !dropdown.contains(event.target)) {
+      dropdown.style.display = "none";
+    }
+  });
+</script>
 
 </body>
 </html>
