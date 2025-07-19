@@ -68,6 +68,7 @@
 
     /* Аккаунт справа сверху */
     #account-container {
+      display: none; /* скрыт по умолчанию */
       position: absolute;
       top: 20px;
       right: 20px;
@@ -222,13 +223,14 @@
         accountContainer.style.display = "block";
       } else {
         userEmailElem.textContent = "Не вошли в аккаунт";
-        accountContainer.style.display = "none";
+        // НЕ скрываем здесь, так как изначально скрыт в CSS
+        // accountContainer.style.display = "none";
       }
     });
 
     logoutBtn.addEventListener('click', async () => {
       await signOut(auth);
-      window.location.href = "login.html"; // после выхода — редирект на логин
+      window.location.href = "login.html"; // редирект на страницу входа после выхода
     });
   </script>
 </body>
