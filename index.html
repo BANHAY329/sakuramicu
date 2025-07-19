@@ -1,99 +1,121 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <title>Sakuramicu</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Сакурамицу — Главное меню</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f8f9fa;
+      margin: 0; font-family: Arial, sans-serif; background: #fafafa; color: #222;
     }
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 20px;
-      background: #ffffff;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      background: #de5d83; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;
     }
     .logo {
-      font-size: 20px;
-      font-weight: bold;
+      font-weight: bold; font-size: 1.5em;
     }
-    .account-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: url('https://cdn-icons-png.flaticon.com/512/149/149071.png') center/cover no-repeat;
-      cursor: pointer;
+    nav a {
+      color: white; margin-left: 15px; text-decoration: none; font-weight: 600; cursor: pointer;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    #account-container {
       position: relative;
-    }
-    .dropdown {
-      position: absolute;
-      top: 45px;
-      right: 0;
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      padding: 10px;
-      display: none;
-      z-index: 999;
-    }
-    .dropdown button {
-      background: #dc3545;
-      color: white;
-      border: none;
-      padding: 8px 12px;
       cursor: pointer;
-      border-radius: 4px;
     }
-    #main, #auth {
+    #account-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: url('https://cdn-icons-png.flaticon.com/512/149/149071.png') center/cover no-repeat;
+    }
+    #account-menu {
+      position: absolute; top: 45px; right: 0;
+      background: white; border: 1px solid #ccc; border-radius: 6px; padding: 10px; display: none; min-width: 120px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+      z-index: 10;
+    }
+    #account-menu button {
+      background: #de5d83; border: none; color: white; padding: 8px 12px; border-radius: 4px; width: 100%; cursor: pointer;
+    }
+    main {
+      max-width: 900px; margin: 20px auto; padding: 0 20px;
+    }
+    section {
       display: none;
-      padding: 20px;
     }
+    section.active {
+      display: block;
+    }
+    /* Простой стиль формы входа */
     #auth input {
       display: block;
-      margin: 10px 0;
+      width: 250px;
       padding: 8px;
-      width: 200px;
+      margin: 10px 0;
+      font-size: 14px;
     }
     #auth button {
-      padding: 8px 12px;
+      margin: 5px 5px 10px 0;
+      padding: 8px 15px;
+      cursor: pointer;
+      background: #de5d83;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">Sakuramicu</div>
-  <div id="account-container" style="position: relative;">
-    <div class="account-icon" id="accountIcon"></div>
-    <div class="dropdown" id="accountDropdown">
+  <div class="logo">Сакурамицу</div>
+  <nav>
+    <a onclick="showPage('home')">Главная</a>
+    <a onclick="showPage('alliances')">Союзы</a>
+    <a onclick="showPage('laws')">Законы</a>
+  </nav>
+  <div id="account-container">
+    <div id="account-icon"></div>
+    <div id="account-menu">
+      <div id="user-email" style="margin-bottom: 10px; font-size: 14px; color: #222;"></div>
       <button id="logoutBtn">Выйти</button>
     </div>
   </div>
 </header>
 
-<div id="main">
-  <h2>Добро пожаловать!</h2>
-  <p>Это главная страница сайта.</p>
-</div>
+<main>
+  <section id="home" class="active">
+    <h2>Добро пожаловать в Сакурамицу</h2>
+    <p>Здесь находится главная информация о государстве.</p>
+  </section>
 
-<div id="auth">
-  <h2>Вход или регистрация</h2>
-  <input type="email" id="email" placeholder="Email">
-  <input type="password" id="password" placeholder="Пароль">
-  <button onclick="signUp()">Зарегистрироваться</button>
-  <button onclick="signIn()">Войти</button>
-  <button onclick="signInWithGoogle()">Войти через Google</button>
-</div>
+  <section id="alliances">
+    <h2>Союзы</h2>
+    <p>Информация о торговых и военных союзах Сакурамицу.</p>
+  </section>
 
-<!-- Firebase SDK -->
+  <section id="laws">
+    <h2>Законы</h2>
+    <p>Основные законы и правовые нормы Сакурамицу.</p>
+  </section>
+
+  <section id="auth">
+    <h2>Вход или регистрация</h2>
+    <input id="email" type="email" placeholder="Email" />
+    <input id="password" type="password" placeholder="Пароль" />
+    <button onclick="signUp()">Зарегистрироваться</button>
+    <button onclick="signIn()">Войти</button>
+    <button onclick="signInWithGoogle()">Войти через Google</button>
+  </section>
+</main>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getAuth, onAuthStateChanged, createUserWithEmailAndPassword,
+    signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyC3NHMsA8hWcqSLrwFjctnLbxTcd-qFJpc",
@@ -108,72 +130,86 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  const main = document.getElementById('main');
-  const authBlock = document.getElementById('auth');
-  const accountIcon = document.getElementById('accountIcon');
-  const dropdown = document.getElementById('accountDropdown');
+  const pages = {
+    home: document.getElementById('home'),
+    alliances: document.getElementById('alliances'),
+    laws: document.getElementById('laws'),
+    auth: document.getElementById('auth')
+  };
+
+  const accountContainer = document.getElementById('account-container');
+  const accountIcon = document.getElementById('account-icon');
+  const accountMenu = document.getElementById('account-menu');
+  const userEmailElem = document.getElementById('user-email');
   const logoutBtn = document.getElementById('logoutBtn');
 
-  // Показ интерфейса
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      main.style.display = 'block';
-      authBlock.style.display = 'none';
-    } else {
-      main.style.display = 'none';
-      authBlock.style.display = 'block';
+  // Показать выбранную страницу, скрыть остальные
+  window.showPage = (pageId) => {
+    for (const key in pages) {
+      pages[key].classList.remove('active');
     }
-  });
-
-  // Регистрация
-  window.signUp = async () => {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-      alert("Ошибка регистрации: " + error.message);
-    }
-  };
-
-  // Вход
-  window.signIn = async () => {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-      alert("Ошибка входа: " + error.message);
-    }
-  };
-
-  // Вход через Google
-  window.signInWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (error) {
-      alert("Ошибка входа через Google: " + error.message);
-    }
-  };
-
-  // Выход
-  logoutBtn.onclick = async () => {
-    await signOut(auth);
-    dropdown.style.display = "none";
+    pages[pageId].classList.add('active');
   };
 
   // Показывать/скрывать меню аккаунта
   accountIcon.onclick = () => {
-    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    accountMenu.style.display = accountMenu.style.display === 'block' ? 'none' : 'block';
   };
 
-  // Скрытие меню при клике вне блока
-  document.addEventListener("click", function(event) {
-    if (!accountIcon.contains(event.target) && !dropdown.contains(event.target)) {
-      dropdown.style.display = "none";
+  // Скрывать меню аккаунта при клике вне
+  document.addEventListener('click', e => {
+    if (!accountContainer.contains(e.target)) {
+      accountMenu.style.display = 'none';
     }
   });
+
+  // Отслеживать состояние входа
+  onAuthStateChanged(auth, user => {
+    if (user) {
+      userEmailElem.textContent = user.email || "Аноним";
+      accountContainer.style.display = "block";
+      showPage('home'); // показываем главную страницу
+    } else {
+      accountContainer.style.display = "none";
+      showPage('auth'); // показываем форму входа
+    }
+  });
+
+  // Функции для входа и регистрации
+  window.signUp = async () => {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    if (!email || !password) return alert('Введите email и пароль');
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } catch (e) {
+      alert("Ошибка регистрации: " + e.message);
+    }
+  };
+
+  window.signIn = async () => {
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    if (!email || !password) return alert('Введите email и пароль');
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (e) {
+      alert("Ошибка входа: " + e.message);
+    }
+  };
+
+  window.signInWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (e) {
+      alert("Ошибка входа через Google: " + e.message);
+    }
+  };
+
+  logoutBtn.onclick = async () => {
+    await signOut(auth);
+  };
 </script>
 
 </body>
