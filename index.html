@@ -67,20 +67,31 @@
   </style>
 </head>
 <body>
-<div id="user-profile" style="position: fixed; top: 20px; right: 20px;">
-  <div id="profile-icon" style="cursor: pointer;">
-    <img src="https://www.svgrepo.com/show/382106/account-avatar-profile-user-11.svg" width="40" height="40">
+<!-- Аккаунт и меню -->
+<div id="user-profile" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+  <div id="profile-icon" style="cursor: pointer; border-radius: 50%; overflow: hidden; width: 48px; height: 48px; transition: transform 0.2s;">
+    <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="Profile" width="48" height="48">
   </div>
-  <div id="profile-menu" style="display: none; position: absolute; right: 0; top: 50px; background: white; border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
-    <p id="user-email" style="margin-bottom: 10px;"></p>
-    <button onclick="logout()">Выйти</button>
+  <div id="profile-menu" style="display: none; position: absolute; right: 0; margin-top: 10px; background: white; border: 1px solid #ccc; padding: 12px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); min-width: 180px;">
+    <p id="user-email" style="margin-bottom: 10px; font-size: 14px; color: #333;"></p>
+    <button onclick="logout()" style="padding: 6px 12px; background-color: #e53935; color: white; border: none; border-radius: 5px; cursor: pointer;">Выйти</button>
   </div>
 </div>
 
+<!-- Сценарий -->
 <script>
   const icon = document.getElementById("profile-icon");
   const menu = document.getElementById("profile-menu");
-  icon.onclick = () => menu.style.display = menu.style.display === "none" ? "block" : "none";
+
+  icon.onclick = () => {
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+  };
+
+  window.addEventListener("click", function (e) {
+    if (!icon.contains(e.target) && !menu.contains(e.target)) {
+      menu.style.display = "none";
+    }
+  });
 
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
@@ -90,7 +101,9 @@
 
   function logout() {
     firebase.auth().signOut().then(() => {
-      location.reload();
+      window.location.reload();
+    }).catch(error => {
+      console.error("Ошибка выхода:", error);
     });
   }
 </script>
