@@ -6,6 +6,52 @@
   <title>Союзы - Сакурамицу</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP&display=swap" rel="stylesheet">
   <style>
+    .account {
+    position: fixed;
+    top: 20px;
+    right: 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 1000;
+    font-family: Arial, sans-serif;
+  }
+    .account img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #c85b5b;
+  }
+    .account-name {
+    color: #333;
+    font-weight: bold;
+    cursor: pointer;
+    position: relative;
+  }
+    .account-dropdown {
+    display: none;
+    position: absolute;
+    top: 25px;
+    right: 0;
+    background-color: #fff7f5;
+    border: 1px solid #c5b1ae;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    padding: 8px 0;
+    border-radius: 6px;
+    width: 130px;
+  }
+    .account-dropdown a {
+    display: block;
+    padding: 8px 15px;
+    text-decoration: none;
+    color: #333;
+  }
+    .account-dropdown a:hover {
+    background-color: #f4dad6;
+  }
+    .account-name:hover .account-dropdown {
+    display: block;
+  }
     body {
       margin: 0;
       padding: 0;
@@ -60,6 +106,17 @@
   </style>
 </head>
 <body>
+<div class="account">
+  <img src="https://i.imgur.com/your-avatar.png" alt="Avatar">
+  <div class="account-name">
+    SakuraUser
+    <div class="account-dropdown">
+      <a href="#">Профиль</a>
+      <a href="#">Настройки</a>
+      <a href="#">Выйти</a>
+    </div>
+  </div>
+</div>
   <header>
     <h1>Союзы Сакурамицу</h1>
   </header>
