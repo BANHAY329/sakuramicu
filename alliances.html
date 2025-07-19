@@ -18,6 +18,7 @@
       padding: 20px;
       text-align: center;
       border-bottom: 4px solid #c4a69f;
+      position: relative;
     }
     header h1 {
       margin: 0;
@@ -56,12 +57,74 @@
       padding: 20px;
       background-color: #d8b4a0;
       color: #fff;
+      margin-top: 40px;
+    }
+    /* Аккаунт справа сверху */
+    #account-container {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      cursor: pointer;
+      user-select: none;
+      z-index: 1000;
+    }
+    #account-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: url('https://cdn-icons-png.flaticon.com/512/149/149071.png') center/cover no-repeat;
+      border: 2px solid #af5f5f;
+      transition: transform 0.2s ease;
+    }
+    #account-icon:hover {
+      transform: scale(1.1);
+    }
+    #account-menu {
+      display: none;
+      position: absolute;
+      top: 52px;
+      right: 0;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 12px;
+      min-width: 160px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    #account-menu p {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      color: #333;
+      word-break: break-word;
+    }
+    #logout-btn {
+      width: 100%;
+      padding: 8px 12px;
+      background-color: #af5f5f;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    #logout-btn:hover {
+      background-color: #8c3b3b;
     }
   </style>
 </head>
 <body>
   <header>
     <h1>Союзы Сакурамицу</h1>
+
+    <!-- Аккаунт -->
+    <div id="account-container" aria-label="Аккаунт пользователя">
+      <div id="account-icon" tabindex="0" aria-haspopup="true" aria-expanded="false"></div>
+      <div id="account-menu" role="menu" aria-hidden="true">
+        <p id="user-email">Загрузка...</p>
+        <button id="logout-btn" role="menuitem">Выйти</button>
+      </div>
+    </div>
   </header>
   <nav>
     <a href="index.html">Главная</a>
@@ -75,7 +138,7 @@
     <h2>Наши партнёры</h2>
     <ul>
       <li><strong>Синдарис</strong> — торговый партнёр. Поддерживаем обмен ресурсами.</li>
-      <li><a href=https://sites.google.com/view/sindaris/%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D0%B0%D1%8F-%D1%81%D1%82%D1%80%D0%B0%D0%BD%D0%B8%D1%86%D0%B0?authuser=0>Документ</a></li>
+      <li><a href="https://sites.google.com/view/sindaris/%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D0%B0%D1%8F-%D1%81%D1%82%D1%80%D0%B0%D0%BD%D0%B8%D1%86%D0%B0?authuser=0">Документ</a></li>
     </ul>
 
     <h2>Пакт взаимопомощи</h2>
@@ -87,5 +150,59 @@
   <footer>
     <p>© 2025 Государство Сакурамицу | Все права защищены</p>
   </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getAuth, onAuthStateChanged, signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC3NHMsA8hWcqSLrwFjctnLbxTcd-qFJpc",
+      authDomain: "sakuramicu-c781e.firebaseapp.com",
+      projectId: "sakuramicu-c781e",
+      storageBucket: "sakuramicu-c781e.appspot.com",
+      messagingSenderId: "1009061010630",
+      appId: "1:1009061010630:web:ea6521a024bb118f968bc7",
+      measurementId: "G-FJ9G8Q6WRB"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    const accountContainer = document.getElementById('account-container');
+    const accountIcon = document.getElementById('account-icon');
+    const accountMenu = document.getElementById('account-menu');
+    const userEmailElem = document.getElementById('user-email');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    accountIcon.addEventListener('click', () => {
+      const isShown = accountMenu.style.display === 'block';
+      accountMenu.style.display = isShown ? 'none' : 'block';
+      accountIcon.setAttribute('aria-expanded', !isShown);
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!accountContainer.contains(event.target)) {
+        accountMenu.style.display = 'none';
+        accountIcon.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        userEmailElem.textContent = user.email || "Аноним";
+        accountContainer.style.display = "block";
+      } else {
+        userEmailElem.textContent = "Не вошли в аккаунт";
+        accountContainer.style.display = "none";
+      }
+    });
+
+    logoutBtn.addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.href = "index.html"; // после выхода — возвращаемся на главную
+    });
+  </script>
 </body>
 </html>
