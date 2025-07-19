@@ -80,6 +80,19 @@
     <h1>桜蜜国 - Государство Сакурамицу</h1>
     <p>Страна лепестков, чести и внутренней гармонии</p>
   </header>
+<!-- Аккаунт справа сверху -->
+<div id="account-container" style="position: fixed; top: 20px; right: 20px; z-index: 1000; cursor: pointer; user-select: none;">
+  <div id="account-icon" tabindex="0" aria-haspopup="true" aria-expanded="false" 
+       style="width: 42px; height: 42px; border-radius: 50%; background: url('https://cdn-icons-png.flaticon.com/512/149/149071.png') center/cover no-repeat; border: 2px solid #af5f5f; transition: transform 0.2s ease;">
+  </div>
+  <div id="account-menu" role="menu" aria-hidden="true" 
+       style="display:none; position: absolute; top: 52px; right: 0; background: white; border: 1px solid #ccc; border-radius: 8px; padding: 12px; min-width: 160px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+    <button id="logout-btn" role="menuitem" 
+      style="width: 100%; padding: 8px 12px; background-color: #af5f5f; border: none; border-radius: 6px; color: white; font-weight: bold; cursor: pointer; transition: background-color 0.2s ease;">
+      Выйти
+    </button>
+  </div>
+</div>
   <nav>
     <a href="index.html">Главная</a>
     <a href="alliances.html">Союзы</a>
