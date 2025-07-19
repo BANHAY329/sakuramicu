@@ -1,102 +1,86 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ja">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Вход и регистрация - Сакурамицу</title>
+  <title>Вход / Регистрация - Sakuramicu</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP&display=swap" rel="stylesheet" />
   <style>
     body {
       font-family: 'Noto Serif JP', serif;
       background: #f9f6f1;
-      max-width: 400px;
-      margin: 50px auto;
-      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: white;
+      padding: 2rem;
       border-radius: 8px;
-      box-shadow: 0 0 12px #ccc;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      width: 320px;
       text-align: center;
-      color: #333;
     }
     h2 {
-      margin-bottom: 15px;
+      margin-bottom: 1rem;
       color: #8c1c3c;
     }
     input {
-      width: 90%;
-      padding: 10px;
+      width: 100%;
+      padding: 8px 10px;
       margin: 8px 0;
-      font-size: 16px;
       border: 1px solid #ccc;
-      border-radius: 4px;
+      border-radius: 6px;
+      font-size: 1rem;
     }
     button {
-      width: 95%;
-      padding: 12px;
-      margin: 15px 0;
-      background-color: #d89683;
-      border: none;
-      border-radius: 5px;
+      width: 100%;
+      padding: 10px;
+      background-color: #8c1c3c;
       color: white;
-      font-weight: bold;
-      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
       cursor: pointer;
-      transition: background-color 0.3s;
+      margin-top: 12px;
     }
     button:hover {
-      background-color: #b56e5b;
+      background-color: #6b1528;
     }
-    a {
+    #error-message {
+      color: red;
+      margin-top: 10px;
+      min-height: 18px;
+    }
+    .toggle {
+      margin-top: 10px;
       color: #8c1c3c;
       cursor: pointer;
-      text-decoration: underline;
-    }
-    #message {
-      min-height: 24px;
-      margin-top: 10px;
-      font-weight: 600;
-      color: red;
-    }
-    #googleBtn {
-      background-color: #4285f4;
-      margin-top: 5px;
-    }
-    #googleBtn:hover {
-      background-color: #357ae8;
+      user-select: none;
+      font-size: 0.9rem;
     }
   </style>
 </head>
 <body>
-  <h2 id="formTitle">Вход в аккаунт</h2>
-
-  <div id="loginForm">
-    <input type="email" id="loginEmail" placeholder="Email" autocomplete="username" />
-    <input type="password" id="loginPassword" placeholder="Пароль" autocomplete="current-password" />
-    <button id="loginBtn">Войти</button>
-    <p>Нет аккаунта? <a id="showRegister">Зарегистрироваться</a></p>
+  <div class="container">
+    <h2 id="form-title">Войти</h2>
+    <input type="email" id="email" placeholder="Email" autocomplete="username" />
+    <input type="password" id="password" placeholder="Пароль" autocomplete="current-password" />
+    <button id="submit-btn">Войти</button>
+    <div id="error-message"></div>
+    <div class="toggle" id="toggle-form">Нет аккаунта? Зарегистрироваться</div>
   </div>
 
-  <div id="registerForm" style="display:none;">
-    <input type="email" id="regEmail" placeholder="Email" autocomplete="username" />
-    <input type="password" id="regPassword" placeholder="Пароль (мин. 6 символов)" autocomplete="new-password" />
-    <button id="regBtn">Зарегистрироваться</button>
-    <p>Уже есть аккаунт? <a id="showLogin">Войти</a></p>
-  </div>
-
-  <button id="googleBtn">Войти через Google</button>
-
-  <div id="message"></div>
-
-  <!-- Firebase SDK -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
       getAuth,
       signInWithEmailAndPassword,
       createUserWithEmailAndPassword,
-      signInWithPopup,
-      GoogleAuthProvider,
       onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC3NHMsA8hWcqSLrwFjctnLbxTcd-qFJpc",
@@ -110,105 +94,54 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
 
-    const loginForm = document.getElementById("loginForm");
-    const registerForm = document.getElementById("registerForm");
-    const messageEl = document.getElementById("message");
-    const formTitle = document.getElementById("formTitle");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const submitBtn = document.getElementById("submit-btn");
+    const errorMessage = document.getElementById("error-message");
+    const toggleForm = document.getElementById("toggle-form");
+    const formTitle = document.getElementById("form-title");
 
-    document.getElementById("showRegister").onclick = e => {
-      e.preventDefault();
-      messageEl.textContent = "";
-      loginForm.style.display = "none";
-      registerForm.style.display = "block";
-      formTitle.textContent = "Регистрация";
-    };
+    let isLogin = true; // режим: вход или регистрация
 
-    document.getElementById("showLogin").onclick = e => {
-      e.preventDefault();
-      messageEl.textContent = "";
-      registerForm.style.display = "none";
-      loginForm.style.display = "block";
-      formTitle.textContent = "Вход в аккаунт";
-    };
+    toggleForm.addEventListener("click", () => {
+      isLogin = !isLogin;
+      if (isLogin) {
+        formTitle.textContent = "Войти";
+        submitBtn.textContent = "Войти";
+        toggleForm.textContent = "Нет аккаунта? Зарегистрироваться";
+      } else {
+        formTitle.textContent = "Регистрация";
+        submitBtn.textContent = "Зарегистрироваться";
+        toggleForm.textContent = "Уже есть аккаунт? Войти";
+      }
+      errorMessage.textContent = "";
+    });
 
-    document.getElementById("loginBtn").onclick = () => {
-      messageEl.style.color = "red";
-      messageEl.textContent = "";
-      const email = document.getElementById("loginEmail").value.trim();
-      const password = document.getElementById("loginPassword").value;
+    submitBtn.addEventListener("click", async () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+      errorMessage.textContent = "";
+
       if (!email || !password) {
-        messageEl.textContent = "Введите email и пароль";
+        errorMessage.textContent = "Пожалуйста, введите email и пароль.";
         return;
       }
-      signInWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          messageEl.style.color = "green";
-          messageEl.textContent = "Успешный вход! Перенаправляем...";
-          setTimeout(() => {
-            window.location.href = "index.html";
-          }, 1000);
-        })
-        .catch(e => {
-          if (e.code === "auth/user-not-found") {
-            messageEl.textContent = "Пользователь не найден";
-          } else if (e.code === "auth/wrong-password") {
-            messageEl.textContent = "Неверный пароль";
-          } else {
-            messageEl.textContent = "Ошибка входа: " + e.message;
-          }
-        });
-    };
-
-    document.getElementById("regBtn").onclick = () => {
-      messageEl.style.color = "red";
-      messageEl.textContent = "";
-      const email = document.getElementById("regEmail").value.trim();
-      const password = document.getElementById("regPassword").value;
-      if (!email || !password) {
-        messageEl.textContent = "Введите email и пароль";
-        return;
+      try {
+        if (isLogin) {
+          await signInWithEmailAndPassword(auth, email, password);
+        } else {
+          await createUserWithEmailAndPassword(auth, email, password);
+        }
+        // После успешного входа/регистрации — переходим на главную
+        window.location.href = "index.html";
+      } catch (error) {
+        errorMessage.textContent = error.message;
       }
-      createUserWithEmailAndPassword(auth, email, password)
-        .then(() => {
-          messageEl.style.color = "green";
-          messageEl.textContent = "Регистрация прошла успешно! Теперь войдите.";
-          registerForm.style.display = "none";
-          loginForm.style.display = "block";
-          formTitle.textContent = "Вход в аккаунт";
-        })
-        .catch(e => {
-          if (e.code === "auth/email-already-in-use") {
-            messageEl.textContent = "Этот email уже зарегистрирован. Попробуйте войти.";
-          } else if (e.code === "auth/invalid-email") {
-            messageEl.textContent = "Неверный формат email";
-          } else if (e.code === "auth/weak-password") {
-            messageEl.textContent = "Пароль должен быть минимум 6 символов";
-          } else {
-            messageEl.textContent = "Ошибка регистрации: " + e.message;
-          }
-        });
-    };
+    });
 
-    document.getElementById("googleBtn").onclick = () => {
-      messageEl.textContent = "";
-      signInWithPopup(auth, provider)
-        .then(() => {
-          messageEl.style.color = "green";
-          messageEl.textContent = "Успешный вход через Google! Перенаправляем...";
-          setTimeout(() => {
-            window.location.href = "index.html";
-          }, 1000);
-        })
-        .catch(e => {
-          messageEl.style.color = "red";
-          messageEl.textContent = "Ошибка входа через Google: " + e.message;
-        });
-    };
-
-    // Если пользователь уже залогинен, сразу перекидываем на главную
-    onAuthStateChanged(auth, user => {
+    // Если пользователь уже залогинен, сразу отправим на главную
+    onAuthStateChanged(auth, (user) => {
       if (user) {
         window.location.href = "index.html";
       }
