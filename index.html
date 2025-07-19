@@ -2,60 +2,95 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Главная страница</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stoneland</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+    }
+    header {
+      background-color: #222;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .account {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .account img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+    main {
+      padding: 20px;
+    }
+    .info-box {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .info-box h2 {
+      margin-top: 0;
+    }
+  </style>
 </head>
 <body>
-  <!-- Навигация -->
-  <nav style="display: flex; justify-content: space-between; align-items: center; padding: 10px;">
-    <div>
-      <a href="index.html">Главная</a> |
-      <a href="alliances.html">Союзы</a> |
-      <a href="rules.html">Законы</a>
+  <header>
+    <h1>🏰 Stoneland</h1>
+    <div class="account" id="account-info"></div>
+  </header>
+  <main>
+    <div class="info-box">
+      <h2>👑 Правитель: Оямато</h2>
+      <p>🏞️ Столица: Каменные Врата</p>
+      <p>🛡️ Союзы: Объединённые Земли, Северный Легион</p>
+      <p>📜 Законы: [перейти в раздел законов]</p>
+      <p>🌐 Статус: Мирное время</p>
     </div>
-    <div>
-      <img src="https://cdn-icons-png.flaticon.com/512/1144/1144760.png" alt="Профиль" style="width: 30px; vertical-align: middle;">
-      <button id="logoutBtn">Выйти</button>
-    </div>
-  </nav>
-
-  <h1>Добро пожаловать на главную страницу!</h1>
-
-  <!-- Firebase + Скрипт авторизации -->
+  </main>
   <script type="module">
-    // Firebase SDK
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-    // Твоя конфигурация Firebase
     const firebaseConfig = {
-      apiKey: "ТВОЙ_API_KEY",
-      authDomain: "ТВОЙ_AUTH_DOMAIN",
-      projectId: "ТВОЙ_PROJECT_ID",
-      storageBucket: "ТВОЙ_STORAGE_BUCKET",
-      messagingSenderId: "ТВОЙ_MESSAGING_SENDER_ID",
-      appId: "ТВОЙ_APP_ID"
+      apiKey: "AIzaSyC3NHMsA8hWcqSLrwFjctnLbxTcd-qFJpc",
+      authDomain: "sakuramicu-c781e.firebaseapp.com",
+      projectId: "sakuramicu-c781e",
+      storageBucket: "sakuramicu-c781e.appspot.com",
+      messagingSenderId: "1009061010630",
+      appId: "1:1009061010630:web:ea6521a024bb118f968bc7",
+      measurementId: "G-FJ9G8Q6WRB"
     };
 
-    // Инициализация
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
-    // Проверка авторизации: если не залогинен — уводим на login.html
+    const accountDiv = document.getElementById('account-info');
+
     onAuthStateChanged(auth, (user) => {
-      if (!user) {
+      if (user) {
+        const img = user.photoURL ? `<img src="${user.photoURL}" alt="Аватар">` : '';
+        const name = user.displayName || user.email;
+        accountDiv.innerHTML = `
+          ${img}
+          <span>${name}</span>
+          <button id="logout">Выйти</button>
+        `;
+        document.getElementById("logout").addEventListener("click", async () => {
+          await signOut(auth);
+          window.location.href = "login.html";
+        });
+      } else {
         window.location.href = "login.html";
       }
-    });
-
-    // Кнопка выхода
-    const logoutBtn = document.getElementById("logoutBtn");
-    logoutBtn.addEventListener("click", () => {
-      signOut(auth).then(() => {
-        window.location.href = "login.html";
-      }).catch((error) => {
-        console.error("Ошибка выхода:", error);
-        alert("Не удалось выйти из аккаунта.");
-      });
     });
   </script>
 </body>
