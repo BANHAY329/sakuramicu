@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Вход / Регистрация</title>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: Arial, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -15,115 +16,94 @@
     .container {
       background: white;
       padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
       text-align: center;
-      width: 300px;
     }
     input {
-      width: 100%;
       padding: 10px;
-      margin: 8px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+      margin: 10px;
+      width: 250px;
     }
     button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 8px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 6px;
+      padding: 10px 20px;
+      margin: 10px;
       cursor: pointer;
     }
     .google-btn {
-      background-color: #db4437;
-    }
-    .toggle {
-      margin-top: 12px;
-      color: #555;
-      cursor: pointer;
+      background-color: #4285f4;
+      color: white;
+      border: none;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2 id="formTitle">Вход</h2>
-    <input type="email" id="email" placeholder="Email">
-    <input type="password" id="password" placeholder="Пароль">
-    <button id="submitBtn">Войти</button>
-    <button class="google-btn" id="googleLoginBtn">Войти через Google</button>
-    <div class="toggle" id="toggleForm">Нет аккаунта? Зарегистрироваться</div>
-    <div id="error" style="color: red; margin-top: 10px;"></div>
+    <h2>Добро пожаловать</h2>
+    <input type="email" id="email" placeholder="Email" /><br />
+    <input type="password" id="password" placeholder="Пароль" /><br />
+    <button onclick="register()">Регистрация</button>
+    <button onclick="login()">Войти</button><br />
+    <button class="google-btn" onclick="googleLogin()">Войти через Google</button>
+    <p id="error" style="color: red;"></p>
   </div>
 
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import {
-      getAuth,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      GoogleAuthProvider,
-      signInWithPopup
-    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     const firebaseConfig = {
-      apiKey: "ТВОЙ_API_KEY",
-      authDomain: "ТВОЙ_AUTH_DOMAIN",
-      projectId: "ТВОЙ_PROJECT_ID",
-      storageBucket: "ТВОЙ_STORAGE_BUCKET",
-      messagingSenderId: "ТВОЙ_MESSAGING_SENDER_ID",
-      appId: "ТВОЙ_APP_ID"
+      apiKey: "AIzaSyC3NHMsA8hWcqSLrwFjctnLbxTcd-qFJpc",
+      authDomain: "sakuramicu-c781e.firebaseapp.com",
+      projectId: "sakuramicu-c781e",
+      storageBucket: "sakuramicu-c781e.appspot.com",
+      messagingSenderId: "1009061010630",
+      appId: "1:1009061010630:web:ea6521a024bb118f968bc7",
+      measurementId: "G-FJ9G8Q6WRB"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
 
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const submitBtn = document.getElementById('submitBtn');
-    const googleLoginBtn = document.getElementById('googleLoginBtn');
-    const toggleForm = document.getElementById('toggleForm');
-    const formTitle = document.getElementById('formTitle');
-    const errorDiv = document.getElementById('error');
-
-    let isLogin = true;
-
-    toggleForm.addEventListener('click', () => {
-      isLogin = !isLogin;
-      formTitle.textContent = isLogin ? 'Вход' : 'Регистрация';
-      submitBtn.textContent = isLogin ? 'Войти' : 'Зарегистрироваться';
-      toggleForm.textContent = isLogin ? 'Нет аккаунта? Зарегистрироваться' : 'Уже есть аккаунт? Войти';
-      errorDiv.textContent = '';
-    });
-
-    submitBtn.addEventListener('click', async () => {
-      const email = emailInput.value;
-      const password = passwordInput.value;
-      errorDiv.textContent = '';
-      try {
-        if (isLogin) {
-          await signInWithEmailAndPassword(auth, email, password);
-        } else {
-          await createUserWithEmailAndPassword(auth, email, password);
-        }
-        window.location.href = "index.html";
-      } catch (error) {
-        errorDiv.textContent = error.message;
+    // Проверка статуса входа
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        window.location.href = "index.html"; // перенаправление в интерфейс
       }
     });
 
-    googleLoginBtn.addEventListener('click', async () => {
-      const provider = new GoogleAuthProvider();
+    // Регистрация
+    window.register = async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      try {
+        await createUserWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        document.getElementById("error").innerText = "Ошибка регистрации: " + error.message;
+      }
+    };
+
+    // Вход по Email/Паролю
+    window.login = async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (error) {
+        document.getElementById("error").innerText = "Ошибка входа: " + error.message;
+      }
+    };
+
+    // Вход через Google
+    window.googleLogin = async () => {
       try {
         await signInWithPopup(auth, provider);
-        window.location.href = "index.html";
       } catch (error) {
-        errorDiv.textContent = "Ошибка входа через Google: " + error.message;
+        document.getElementById("error").innerText = "Ошибка входа через Google: " + error.message;
       }
-    });
+    };
   </script>
 </body>
 </html>
