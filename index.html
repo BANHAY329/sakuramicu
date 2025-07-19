@@ -67,6 +67,34 @@
   </style>
 </head>
 <body>
+<div id="user-profile" style="position: fixed; top: 20px; right: 20px;">
+  <div id="profile-icon" style="cursor: pointer;">
+    <img src="https://www.svgrepo.com/show/382106/account-avatar-profile-user-11.svg" width="40" height="40">
+  </div>
+  <div id="profile-menu" style="display: none; position: absolute; right: 0; top: 50px; background: white; border: 1px solid #ccc; padding: 10px; border-radius: 5px;">
+    <p id="user-email" style="margin-bottom: 10px;"></p>
+    <button onclick="logout()">Выйти</button>
+  </div>
+</div>
+
+<script>
+  const icon = document.getElementById("profile-icon");
+  const menu = document.getElementById("profile-menu");
+  icon.onclick = () => menu.style.display = menu.style.display === "none" ? "block" : "none";
+
+  firebase.auth().onAuthStateChanged(user => {
+    if (user) {
+      document.getElementById("user-email").innerText = user.email || "Аноним";
+    }
+  });
+
+  function logout() {
+    firebase.auth().signOut().then(() => {
+      location.reload();
+    });
+  }
+</script>
+
   <header>
     <div id="auth-root"></div>
     <h1>桜蜜国 - Государство Сакурамицу</h1>
