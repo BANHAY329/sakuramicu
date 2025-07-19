@@ -23,7 +23,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-document.body.innerHTML = `
+document.getElementById('auth-root').innerHTML =
   <style>
     body {
       font-family: Arial, sans-serif;
