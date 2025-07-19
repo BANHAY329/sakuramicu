@@ -1,206 +1,226 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Главная - Сакурамицу</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP&display=swap" rel="stylesheet" />
   <style>
     body {
-      margin: 0;
-      padding: 0;
       font-family: 'Noto Serif JP', serif;
-      background-color: #f5f1ee;
-      color: #333;
+      background: #f9f6f1;
+      margin: 0;
+      padding: 0 20px 50px;
+      color: #2b2b2b;
     }
     header {
-      background-color: #e3cfc4;
-      padding: 20px;
+      background: #de5d83;
+      color: white;
+      padding: 2rem;
       text-align: center;
-      border-bottom: 4px solid #c4a69f;
+      background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Cherry_blossoms_in_Kyoto.jpg/1280px-Cherry_blossoms_in_Kyoto.jpg');
+      background-size: cover;
+      background-position: center;
+      text-shadow: 0 0 5px #000;
       position: relative;
     }
     header h1 {
+      font-size: 3rem;
       margin: 0;
-      font-size: 2.5rem;
-      letter-spacing: 1px;
     }
     nav {
-      background-color: #d8b4a0;
-      padding: 10px;
-      text-align: center;
+      background: #8c1c3c;
+      color: white;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      padding: 1rem;
     }
     nav a {
-      color: #fff;
+      color: white;
       text-decoration: none;
-      margin: 0 15px;
       font-weight: bold;
-      font-size: 1.1rem;
     }
     nav a:hover {
       text-decoration: underline;
     }
     main {
-      max-width: 800px;
+      max-width: 900px;
       margin: 40px auto;
-      padding: 20px;
-      background-color: #fff9f5;
+      background: #fff9f5;
       border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      box-shadow: 0 0 10px #ccc;
     }
     h2 {
-      color: #af5f5f;
-      border-bottom: 2px solid #e3cfc4;
-      padding-bottom: 5px;
-      margin-top: 0;
+      color: #8c1c3c;
+      border-bottom: 2px solid #8c1c3c;
+      padding-bottom: 0.3rem;
     }
     footer {
+      background: #eee;
       text-align: center;
-      padding: 20px;
-      background-color: #d8b4a0;
-      color: #fff;
-      margin-top: 40px;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #666;
     }
+
     /* Аккаунт справа сверху */
-    #account-container {
-      position: absolute;
+    #user-profile {
+      position: fixed;
       top: 20px;
       right: 20px;
+      z-index: 1000;
       cursor: pointer;
       user-select: none;
+      font-size: 14px;
+      color: white;
+      font-weight: 600;
     }
-    #account-icon {
-      width: 42px;
-      height: 42px;
+    #profile-icon {
       border-radius: 50%;
-      background: url('https://cdn-icons-png.flaticon.com/512/149/149071.png') center/cover no-repeat;
-      border: 2px solid #af5f5f;
-      transition: transform 0.2s ease;
+      overflow: hidden;
+      width: 44px;
+      height: 44px;
+      border: 2px solid white;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 8px;
     }
-    #account-icon:hover {
-      transform: scale(1.1);
+    #profile-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
     }
-    #account-menu {
+    #profile-name {
+      vertical-align: middle;
+      user-select: text;
+    }
+    #profile-menu {
       display: none;
       position: absolute;
-      top: 52px;
       right: 0;
+      top: 56px;
       background: white;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      padding: 12px;
-      min-width: 160px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      z-index: 100;
-    }
-    #account-menu p {
-      margin: 0 0 10px 0;
-      font-size: 14px;
       color: #333;
-      word-break: break-word;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      padding: 10px 15px;
+      min-width: 180px;
+      font-size: 14px;
+      z-index: 1100;
     }
-    #logout-btn {
+    #profile-menu button {
       width: 100%;
-      padding: 8px 12px;
-      background-color: #af5f5f;
+      padding: 8px;
       border: none;
-      border-radius: 6px;
+      border-radius: 5px;
+      background: #e53935;
       color: white;
       font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.2s ease;
+      transition: background-color 0.3s;
     }
-    #logout-btn:hover {
-      background-color: #8c3b3b;
+    #profile-menu button:hover {
+      background: #b52c28;
     }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>Сакурамицу</h1>
-  <div id="account-container" aria-label="Аккаунт пользователя">
-    <div id="account-icon" tabindex="0" aria-haspopup="true" aria-expanded="false"></div>
-    <div id="account-menu" role="menu" aria-hidden="true">
-      <p id="user-email">Загрузка...</p>
-      <button id="logout-btn" role="menuitem">Выйти</button>
+  <header>
+    <h1>桜蜜国 - Государство Сакурамицу</h1>
+
+    <div id="user-profile" title="Аккаунт">
+      <span id="profile-icon">
+        <img src="https://icons.iconarchive.com/icons/icons8/windows-8/256/User-Interface-User-icon.png" alt="Профиль" />
+      </span>
+      <span id="profile-name"></span>
+
+      <div id="profile-menu">
+        <p id="user-email" style="margin:0 0 8px;"></p>
+        <button id="logoutBtn">Выйти</button>
+      </div>
     </div>
-  </div>
-</header>
+  </header>
 
-<nav>
-  <a href="index.html">Главная</a>
-  <a href="alliances.html">Союзы</a>
-  <a href="rules.html">Законы</a>
-</nav>
+  <nav>
+    <a href="index.html">Главная</a>
+    <a href="alliances.html">Союзы</a>
+    <a href="rules.html">Законы</a>
+  </nav>
 
-<main>
-  <h2>Добро пожаловать в Сакурамицу</h2>
-  <p>Здесь находится основная информация о государстве и его особенностях.</p>
-</main>
+  <main>
+    <h2>О государстве</h2>
+    <p>Сакурамицу — процветающее восточное королевство, расположенное среди гор, цветущих деревьев сакуры и спокойных рек. Это земля, где правит традиция, уважение к духам и путь гармонии.</p>
 
-<footer>
-  <p>© 2025 Государство Сакурамицу | Все права защищены</p>
-</footer>
+    <ul>
+      <li>Столица: <strong>Ханамура</strong></li>
+      <li>Правитель: <strong>Рэнджиро Амано (天野連次郎)</strong></li>
+      <li>Символ: <strong>Красная печать сакуры</strong></li>
+    </ul>
+  </main>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import {
-    getAuth, onAuthStateChanged, signOut
-  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  <footer>
+    <p>© 2025 Государство Сакурамицу | Все права защищены</p>
+  </footer>
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyC3NHMsA8hWcqSLrwFjctnLbxTcd-qFJpc",
-    authDomain: "sakuramicu-c781e.firebaseapp.com",
-    projectId: "sakuramicu-c781e",
-    storageBucket: "sakuramicu-c781e.appspot.com",
-    messagingSenderId: "1009061010630",
-    appId: "1:1009061010630:web:ea6521a024bb118f968bc7",
-    measurementId: "G-FJ9G8Q6WRB"
-  };
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+    const firebaseConfig = {
+      apiKey: "AIzaSyC3NHMsA8hWcqSLrwFjctnLbxTcd-qFJpc",
+      authDomain: "sakuramicu-c781e.firebaseapp.com",
+      projectId: "sakuramicu-c781e",
+      storageBucket: "sakuramicu-c781e.appspot.com",
+      messagingSenderId: "1009061010630",
+      appId: "1:1009061010630:web:ea6521a024bb118f968bc7",
+      measurementId: "G-FJ9G8Q6WRB"
+    };
 
-  const accountContainer = document.getElementById('account-container');
-  const accountIcon = document.getElementById('account-icon');
-  const accountMenu = document.getElementById('account-menu');
-  const userEmailElem = document.getElementById('user-email');
-  const logoutBtn = document.getElementById('logout-btn');
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
 
-  // Показать/скрыть меню аккаунта
-  accountIcon.addEventListener('click', () => {
-    const isShown = accountMenu.style.display === 'block';
-    accountMenu.style.display = isShown ? 'none' : 'block';
-    accountIcon.setAttribute('aria-expanded', !isShown);
-  });
+    const userProfile = document.getElementById("user-profile");
+    const profileName = document.getElementById("profile-name");
+    const profileMenu = document.getElementById("profile-menu");
+    const userEmailEl = document.getElementById("user-email");
+    const logoutBtn = document.getElementById("logoutBtn");
 
-  // Закрыть меню при клике вне
-  document.addEventListener('click', (event) => {
-    if (!accountContainer.contains(event.target)) {
-      accountMenu.style.display = 'none';
-      accountIcon.setAttribute('aria-expanded', 'false');
-    }
-  });
+    // Показать/скрыть меню при клике по профилю
+    userProfile.onclick = (e) => {
+      e.stopPropagation();
+      profileMenu.style.display = profileMenu.style.display === "block" ? "none" : "block";
+    };
 
-  // Отслеживание состояния входа
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      userEmailElem.textContent = user.email || "Аноним";
-      accountContainer.style.display = "block";
-    } else {
-      userEmailElem.textContent = "Не вошли в аккаунт";
-      accountContainer.style.display = "none";
-    }
-  });
+    // Скрыть меню при клике вне
+    window.addEventListener("click", () => {
+      profileMenu.style.display = "none";
+    });
 
-  // Выход из аккаунта
-  logoutBtn.addEventListener('click', async () => {
-    await signOut(auth);
-    // Перезагрузить страницу
-    window.location.href = "index.html";
-  });
-</script>
+    // Выход из аккаунта
+    logoutBtn.onclick = () => {
+      signOut(auth).then(() => {
+        window.location.href = "login.html";
+      }).catch(err => {
+        alert("Ошибка выхода: " + err.message);
+      });
+    };
 
+    // Отслеживаем авторизацию
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        profileName.textContent = user.email || user.phoneNumber || "Пользователь";
+        userEmailEl.textContent = user.email || user.phoneNumber || "";
+        userProfile.style.display = "inline-block";
+      } else {
+        // Не залогинен — перебрасываем на страницу логина
+        window.location.href = "login.html";
+      }
+    });
+  </script>
 </body>
 </html>
