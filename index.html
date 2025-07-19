@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>桜蜜国 - Sakuramicu</title>
+  <title>桜蜜国 - Государство Сакурамицу</title>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP&display=swap" rel="stylesheet" />
   <style>
     body {
@@ -27,6 +27,9 @@
     header h1 {
       font-size: 3rem;
       margin: 0;
+    }
+    header p {
+      margin: 0.5rem 0 0 0;
     }
     nav {
       background: #8c1c3c;
@@ -68,13 +71,13 @@
 
     /* Аккаунт справа сверху */
     #account-container {
-      display: none; /* скрыт по умолчанию */
       position: absolute;
       top: 20px;
       right: 20px;
       cursor: pointer;
       user-select: none;
       z-index: 1000;
+      display: none; /* Скрываем по умолчанию */
     }
     #account-icon {
       width: 42px;
@@ -222,15 +225,15 @@
         userEmailElem.textContent = user.email || "Аноним";
         accountContainer.style.display = "block";
       } else {
-        userEmailElem.textContent = "Не вошли в аккаунт";
-        // НЕ скрываем здесь, так как изначально скрыт в CSS
-        // accountContainer.style.display = "none";
+        // Пользователь не авторизован — редирект на страницу входа
+        window.location.href = "login.html";
       }
     });
 
     logoutBtn.addEventListener('click', async () => {
       await signOut(auth);
-      window.location.href = "login.html"; // редирект на страницу входа после выхода
+      // После выхода — редирект на страницу входа
+      window.location.href = "login.html";
     });
   </script>
 </body>
